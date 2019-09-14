@@ -4,9 +4,14 @@
 (setq explicit-sh-args '("-l"))
 (setq tramp-remote-shell-executable "sh")
 
+; Get environment variables from shell
+(require 'exec-path-from-shell) ; https://github.com/purcell/exec-path-from-shell
+(when (memq window-system '(mac ns x))
+  (setq exec-path-from-shell-variables '("PATH" "MANPATH" "KUBECONFIG"))
+  (exec-path-from-shell-initialize))
+
 (require 'shell)
 (require 'tramp)
-(require 'exec-path-from-shell) ; https://github.com/purcell/exec-path-from-shell
 (require 'bash-completion)      ; https://github.com/szermatt/emacs-bash-completion
 (require 'docker-tramp)         ; https://github.com/emacs-pe/docker-tramp.el
 (require 'kubernetes-tramp)     ; https://github.com/gruggiero/kubernetes-tramp
@@ -15,10 +20,6 @@
   (expand-file-name (concat user-emacs-directory "/" "shell-history" "/"))
   "Directory to save shell history files")
 (make-directory user-remote-shell-history-directory t)
-
-(when (memq window-system '(mac ns x))
-  (setq exec-path-from-shell-variables '("PATH" "MANPATH" "KUBECONFIG"))
-  (exec-path-from-shell-initialize))
 
 ; proxy sudo-shells
 (add-to-list 'tramp-default-proxies-alist
