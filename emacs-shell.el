@@ -10,6 +10,7 @@
   (setq exec-path-from-shell-variables '("PATH" "MANPATH" "KUBECONFIG"))
   (exec-path-from-shell-initialize))
 
+(require 'cl)
 (require 'shell)
 (require 'tramp)
 (require 'bash-completion)      ; https://github.com/szermatt/emacs-bash-completion
