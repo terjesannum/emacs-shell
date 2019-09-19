@@ -99,7 +99,7 @@
 
 (add-hook 'kill-buffer-hook
           (lambda ()
-            (when (derived-mode-p 'comint-mode)
+            (when (derived-mode-p 'shell-mode)
               (comint-write-input-ring))))
 
 (add-hook 'kill-emacs-hook
@@ -107,7 +107,7 @@
             (loop for buffer in (buffer-list)
                   do (progn
                        (set-buffer buffer)
-                       (when (derived-mode-p 'comint-mode)
+                       (when (derived-mode-p 'shell-mode)
                          (comint-write-input-ring))))))
 
 (global-set-key (kbd "S-C-n") (lambda ()
