@@ -28,14 +28,19 @@
 
 (defvar tramp-shell-hook nil "Hook called before starting a tramp shell")
 
+(defun emacs-shell (buffer-name directory history-file)
+  (let* ((default-directory directory)
+         (shell-buffer (shell (generate-new-buffer-name buffer-name))))
+    (setq comint-input-ring (make-ring comint-input-ring-size))
+    (setq comint-input-ring-file-name (concat user-remote-shell-history-directory "/" history-file))
+    (comint-read-input-ring 'silent)))
+
 (defun tramp-shell (method host &optional history-name directory)
   (interactive "sMethod: \nsHost: ")
   (run-hook-with-args 'tramp-shell-hook method host history-name directory)
-  (let ((default-directory (format "/%s:%s:%s" method host (or directory ""))))
-    (shell (generate-new-buffer-name (concat method "-" host)))
-    (setq comint-input-ring (make-ring comint-input-ring-size))
-    (setq comint-input-ring-file-name (concat user-remote-shell-history-directory "/" (or history-name host) "." method))
-    (comint-read-input-ring 'silent)))
+  (emacs-shell (concat method "-" host)
+               (format "/%s:%s:%s" method host (or directory ""))
+               (concat (or history-name host) "." method)))
 
 (defun ssh-shell (host &optional directory)
   "Start ssh shell"
@@ -91,10 +96,7 @@
 (defun localhost-shell ()
   "Start shell on localhost"
   (interactive)
-  (let ((default-directory "~")
-        (shell-buffer (shell (generate-new-buffer-name "*shell*"))))
-    (setq comint-input-ring-file-name (concat user-remote-shell-history-directory "/localhost"))
-    (comint-read-input-ring 'silent)))
+  (emacs-shell "*shell*" "~" "localhost"))
 
 (add-hook 'comint-exec-hook
           (lambda ()
