@@ -88,6 +88,14 @@
     (and current-prefix-arg (read-string "Directory: " "/"))))
   (tramp-shell "kubectl" pod (pod-owner-name pod) directory))
 
+(defun localhost-shell ()
+  "Start shell on localhost"
+  (interactive)
+  (let ((default-directory "~")
+        (shell-buffer (shell (generate-new-buffer-name "*shell*"))))
+    (setq comint-input-ring-file-name (concat user-remote-shell-history-directory "/localhost"))
+    (comint-read-input-ring 'silent)))
+
 (add-hook 'comint-exec-hook
           (lambda ()
             (set-process-sentinel (get-buffer-process (current-buffer))
@@ -110,13 +118,7 @@
                        (when (derived-mode-p 'shell-mode)
                          (comint-write-input-ring))))))
 
-(global-set-key (kbd "S-C-n") (lambda ()
-                                (interactive)
-                                (let ((default-directory "~"))
-                                  (shell (generate-new-buffer-name "*shell*"))
-                                  (setq comint-input-ring-file-name (concat user-remote-shell-history-directory "/localhost"))
-                                  (comint-read-input-ring 'silent))))
-
+(global-set-key (kbd "S-C-n") 'localhost-shell)
 (define-key shell-mode-map (kbd "C-p") 'comint-previous-input)
 (define-key shell-mode-map (kbd "C-n") 'comint-next-input)
 
