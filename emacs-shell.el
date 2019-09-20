@@ -33,7 +33,9 @@
          (shell-buffer (shell (generate-new-buffer-name buffer-name))))
     (setq comint-input-ring (make-ring comint-input-ring-size))
     (setq comint-input-ring-file-name (concat user-remote-shell-history-directory "/" history-file))
-    (comint-read-input-ring 'silent)))
+    (comint-read-input-ring 'silent)
+    (set-process-sentinel (get-buffer-process shell-buffer)
+                          'shell-process-kill-buffer-sentinel)))
 
 (defun tramp-shell (method host &optional history-name directory)
   (interactive "sMethod: \nsHost: ")
@@ -97,11 +99,6 @@
   "Start shell on localhost"
   (interactive)
   (emacs-shell "*shell*" "~" "localhost"))
-
-(add-hook 'comint-exec-hook
-          (lambda ()
-            (set-process-sentinel (get-buffer-process (current-buffer))
-                                  'shell-process-kill-buffer-sentinel)))
 
 (defun shell-process-kill-buffer-sentinel (process state)
   (message "shell(%s): %s" (buffer-name) state)
