@@ -21,9 +21,11 @@
   "Directory to save shell history files")
 (make-directory user-remote-shell-history-directory t)
 
-; proxy sudo-shells
+; proxy remote sudo-shells
 (add-to-list 'tramp-default-proxies-alist
              '("." "\\`root\\'" "/ssh:%h:"))
+(add-to-list 'tramp-default-proxies-alist
+             '("localhost" "\\`root\\'" nil))
 
 (defvar tramp-shell-hook nil "Hook called before starting a tramp shell")
 
