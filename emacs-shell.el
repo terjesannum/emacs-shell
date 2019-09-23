@@ -10,7 +10,6 @@
   (setq exec-path-from-shell-variables '("PATH" "MANPATH" "KUBECONFIG"))
   (exec-path-from-shell-initialize))
 
-(require 'cl)
 (require 'shell)
 (require 'tramp)
 (require 'bash-completion)      ; https://github.com/szermatt/emacs-bash-completion
@@ -111,11 +110,12 @@
 
 (add-hook 'kill-emacs-hook
           (lambda ()
-            (loop for buffer in (buffer-list)
-                  do (progn
-                       (set-buffer buffer)
-                       (when (derived-mode-p 'shell-mode)
-                         (comint-write-input-ring))))))
+            (mapc
+             (lambda (buffer)
+               (with-current-buffer buffer
+                 (when (derived-mode-p 'shell-mode)
+                   (comint-write-input-ring))))
+             (buffer-list))))
 
 (global-set-key (kbd "S-C-n") 'localhost-shell)
 (define-key shell-mode-map (kbd "C-p") 'comint-previous-input)
