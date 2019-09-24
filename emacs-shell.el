@@ -119,7 +119,15 @@
                    (comint-write-input-ring))))
              (buffer-list))))
 
+(defun emacs-shell-interrupt-password-command ()
+  "Abort minibuffer password entry and interrupt command"
+  (interactive)
+  (with-selected-window (minibuffer-selected-window)
+    (comint-interrupt-subjob))
+  (abort-recursive-edit))
+
 (global-set-key (kbd "S-C-n") 'localhost-shell)
+(define-key read-passwd-map (kbd "C-c C-c") 'emacs-shell-interrupt-password-command)
 (define-key shell-mode-map (kbd "C-p") 'comint-previous-input)
 (define-key shell-mode-map (kbd "C-n") 'comint-next-input)
 
