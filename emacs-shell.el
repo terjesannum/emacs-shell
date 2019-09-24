@@ -53,12 +53,14 @@
     (and current-prefix-arg (read-string "Directory: " "/"))))
   (tramp-shell "ssh" host nil directory))
 
-(defvar sudo-shell-post-start-hook
-  (lambda (&rest rest)
-    (process-send-string
-     (get-buffer-process (current-buffer))
-     "test -n \"$SUDO_USER\" -a -n \"$BASH\" && SETUP_HOME=$(eval echo ~$SUDO_USER) . $(eval echo ~$SUDO_USER)/.bashrc &>/dev/null\n"))
-  "Hook run after starting sudo-shell")
+(defun sudo-shell-source-user-bashrc (&rest rest)
+  "Source bashrc from user starting sudo-shell"
+  (process-send-string
+   (get-buffer-process (current-buffer))
+   "test -n \"$SUDO_USER\" -a -n \"$BASH\" && SETUP_HOME=$(eval echo ~$SUDO_USER) . $(eval echo ~$SUDO_USER)/.bashrc &>/dev/null\n"))
+
+(defvar sudo-shell-post-start-hook nil "Hook run after starting sudo-shell")
+(add-hook 'sudo-shell-post-start-hook 'sudo-shell-source-user-bashrc)
 
 (defun sudo-shell (host &optional directory)
   "Start sudo shell"
