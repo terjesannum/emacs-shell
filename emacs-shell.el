@@ -107,19 +107,20 @@
   (message "shell(%s): %s" (buffer-name) state)
   (kill-buffer (current-buffer)))
 
-(add-hook 'kill-buffer-hook
-          (lambda ()
-            (when (derived-mode-p 'shell-mode)
-              (comint-write-input-ring))))
+(defun shell-mode-write-comint-input-ring ()
+  (when (derived-mode-p 'shell-mode)
+    (comint-write-input-ring)))
 
-(add-hook 'kill-emacs-hook
-          (lambda ()
-            (mapc
-             (lambda (buffer)
-               (with-current-buffer buffer
-                 (when (derived-mode-p 'shell-mode)
-                   (comint-write-input-ring))))
-             (buffer-list))))
+(add-hook 'kill-buffer-hook 'shell-mode-write-comint-input-ring)
+
+(defun shell-mode-buffers-write-comint-input-ring ()
+  (mapc
+   (lambda (buffer)
+     (with-current-buffer buffer
+       (shell-mode-write-comint-input-ring)))
+   (buffer-list)))
+
+(add-hook 'kill-emacs-hook 'shell-mode-buffers-write-comint-input-ring)
 
 (defun emacs-shell-interrupt-password-command ()
   "Abort minibuffer password entry and interrupt command"
