@@ -1,3 +1,32 @@
+;;; emacs-shell.el --- Emacs tramp and shell setup
+
+;; Copyright (C) 2019 Terje Sannum
+
+;; Author: Terje Sannum <terje@offpiste.org>
+;; Created: 14 Sep 2019
+;; Package-Requires: ((emacs "25.1") (exec-path-from-shell) (bash-completion) (docker-tramp) (kubernetes-tramp))
+;; Keywords: shell
+;; Homepage: https://github.com/terjesannum/emacs-shell
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; See https://github.com/terjesannum/emacs-shell/blob/master/README.md
+
+;;; Code:
+
 (setq tramp-histfile-override t)
 (setq tramp-default-method "ssh")
 (setq explicit-shell-file-name "sh")
@@ -150,3 +179,5 @@
               "\\|^Enter .*password[^:]*: *\\'"))
 
 (provide 'emacs-shell)
+
+;;; emacs-shell.el ends here
