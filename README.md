@@ -34,8 +34,9 @@ To start interactive shells, use these commands:
 
 In addition to the bindings from [shell-mode](https://www.gnu.org/software/emacs/manual/html_node/emacs/Shell-Mode.html), these keybindings are added:
 
-| Keys    | Description               |
-| ------- | ------------------------- |
-| `S-C-n` | Start new localhost shell |
-| `C-p`   | Previous history          |
-| `C-n`   | Next history              |
+| Keys      | Where          | Description               |
+| --------- | -------------- | ------------------------- |
+| `S-C-n`   | global         | Start new localhost shell |
+| `C-p`     | shell-mode     | Previous history          |
+| `C-n`     | shell-mode     | Next history              |
+| `C-c C-c` | password input | Abort command             |
