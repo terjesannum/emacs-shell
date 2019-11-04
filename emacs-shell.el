@@ -160,6 +160,21 @@
     (comint-interrupt-subjob))
   (abort-recursive-edit))
 
+(defun emacs-shell-source-local-bashrc ()
+  "Source bashrc from Emacs host in shell"
+  (interactive)
+  (let ((bashrc (with-temp-buffer
+                  (insert-file-contents "~/.bashrc")
+                  (buffer-string)))
+        (process (get-buffer-process (current-buffer))))
+    (with-temp-buffer
+      (setq bashrc (concat "PS2='>'\n'" bashrc)) ; ensure PS2 is set
+      (dolist (command (split-string bashrc "\n"))
+        (comint-redirect-send-command-to-process command (current-buffer) process nil t)
+        (with-current-buffer (process-buffer process)
+          (while (and (null comint-redirect-completed)
+                      (accept-process-output process 1))))))))
+
 (global-set-key (kbd "S-C-n") 'localhost-shell)
 (define-key read-passwd-map (kbd "C-c C-c") 'emacs-shell-interrupt-password-command)
 (define-key shell-mode-map (kbd "C-p") 'comint-previous-input)
