@@ -57,6 +57,7 @@
              '("localhost" "\\`root\\'" nil))
 
 (defvar tramp-shell-hook nil "Hook called before starting a tramp shell")
+(defvar tramp-shell-started-hook nil "Hook called after starting a tramp shell")
 
 (defun emacs-shell (buffer-name directory history-file)
   (let* ((default-directory directory)
@@ -72,7 +73,8 @@
   (run-hook-with-args 'tramp-shell-hook method host history-name directory)
   (emacs-shell (concat method "-" host)
                (format "/%s:%s:%s" method host (or directory ""))
-               (concat (or history-name host) "." method)))
+               (concat (or history-name host) "." method))
+  (run-hook-with-args 'tramp-shell-started-hook method host history-name directory))
 
 (defun ssh-shell (host &optional directory)
   "Start ssh shell"
