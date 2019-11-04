@@ -86,7 +86,7 @@
   "Source bashrc from user starting sudo-shell"
   (process-send-string
    (get-buffer-process (current-buffer))
-   "test -n \"$SUDO_USER\" -a -n \"$BASH\" && SETUP_HOME=$(eval echo ~$SUDO_USER) . $(eval echo ~$SUDO_USER)/.bashrc >/dev/null 2>&1\n"))
+   "test -n \"$SUDO_USER\" -a -r $(eval echo ~$SUDO_USER)/.bashrc && type bash >/dev/null 2>&1 && exec bash --rcfile $(eval echo ~$SUDO_USER)/.bashrc\n"))
 
 (defvar sudo-shell-post-start-hook nil "Hook run after starting sudo-shell")
 (add-hook 'sudo-shell-post-start-hook 'sudo-shell-source-user-bashrc)
