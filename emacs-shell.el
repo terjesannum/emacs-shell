@@ -170,6 +170,12 @@
                     (accept-process-output process 1))))
       (buffer-string))))
 
+(defun emacs-shell-exec-bash ()
+  "Exec bash if available, return t when running bash"
+  (let ((command-output (emacs-shell-run-command-silently
+                         "if test `basename $0` = 'bash'; then echo running bash; else bash=`which bash` && echo run bash && exec $bash; fi")))
+    (and (string-match "run.* bash" command-output) t)))
+
 (defun emacs-shell-source-local-bashrc ()
   "Source bashrc from Emacs host in shell"
   (interactive)
