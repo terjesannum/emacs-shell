@@ -90,8 +90,7 @@
    (list
     (read-string "Host: ")
     (and current-prefix-arg (read-string "Directory: " "/"))))
-  (tramp-shell "sudo" host nil directory)
-  (run-hook-with-args 'sudo-shell-post-start-hook host directory))
+  (tramp-shell "sudo" host nil directory))
 
 (defun docker-image-name (id)
   (let ((image (car (apply #'process-lines docker-tramp-docker-executable (list "inspect" "-f" "{{ .Config.Image }}" id)))))
