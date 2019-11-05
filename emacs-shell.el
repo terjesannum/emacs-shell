@@ -178,7 +178,7 @@
   (let ((bashrc (with-temp-buffer
                   (insert-file-contents "~/.bashrc")
                   (buffer-string))))
-    (setq bashrc (concat "PS2='>'\n'" bashrc)) ; ensure PS2 is set to get output on mulitline commands
+    (setq bashrc (concat "PS2='>'\n" bashrc)) ; ensure PS2 is set to get output on mulitline commands
     (dolist (command (split-string bashrc "\n"))
       (emacs-shell-run-command-silently command))))
 
