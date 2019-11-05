@@ -84,15 +84,6 @@
     (and current-prefix-arg (read-string "Directory: " "/"))))
   (tramp-shell "ssh" host nil directory))
 
-(defun sudo-shell-source-user-bashrc (&rest rest)
-  "Source bashrc from user starting sudo-shell"
-  (process-send-string
-   (get-buffer-process (current-buffer))
-   "test -n \"$SUDO_USER\" -a -r $(eval echo ~$SUDO_USER)/.bashrc && type bash >/dev/null 2>&1 && exec bash --rcfile $(eval echo ~$SUDO_USER)/.bashrc\n"))
-
-(defvar sudo-shell-post-start-hook nil "Hook run after starting sudo-shell")
-(add-hook 'sudo-shell-post-start-hook 'sudo-shell-source-user-bashrc)
-
 (defun sudo-shell (host &optional directory)
   "Start sudo shell"
   (interactive
@@ -159,6 +150,12 @@
   (with-selected-window (minibuffer-selected-window)
     (comint-interrupt-subjob))
   (abort-recursive-edit))
+
+(defun sudo-shell-source-user-bashrc (&rest rest)
+  "Source bashrc from user starting sudo-shell"
+  (process-send-string
+   (get-buffer-process (current-buffer))
+   "test -n \"$SUDO_USER\" -a -r $(eval echo ~$SUDO_USER)/.bashrc && type bash >/dev/null 2>&1 && exec bash --rcfile $(eval echo ~$SUDO_USER)/.bashrc\n"))
 
 (defun emacs-shell-run-command-silently (command)
   "Run command without showing in the shell buffer or shell history"
