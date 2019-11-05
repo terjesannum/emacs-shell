@@ -182,6 +182,16 @@
     (dolist (command (split-string bashrc "\n"))
       (emacs-shell-run-command-silently command))))
 
+(add-hook 'tramp-shell-started-hook
+          (lambda (method &rest rest)
+            (let ((i 0))
+              (while (and (not (looking-back comint-prompt-regexp)) (< i 10))
+                (sleep-for 0 100)
+                (setq i (1+ i))))
+            (when (emacs-shell-exec-bash)
+              (emacs-shell-source-local-bashrc)
+              (comint-send-input))))
+
 (global-set-key (kbd "S-C-n") 'localhost-shell)
 (define-key read-passwd-map (kbd "C-c C-c") 'emacs-shell-interrupt-password-command)
 (define-key shell-mode-map (kbd "C-p") 'comint-previous-input)
