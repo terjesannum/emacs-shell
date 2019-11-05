@@ -169,7 +169,7 @@
 (defun emacs-shell-exec-bash ()
   "Exec bash if available, return t when running bash"
   (let ((command-output (emacs-shell-run-command-silently
-                         "if test `basename $0` = 'bash'; then echo running bash; else bash=`type -p bash` && echo run bash && exec $bash; fi")))
+                         "if test `basename $0` = 'bash'; then echo running bash; else bash=`type bash` && bash=`echo $bash | grep -oE '[^ ]+$'` && echo run bash && exec $bash; fi")))
     (and (string-match "run.* bash" command-output) t)))
 
 (defun emacs-shell-source-local-bashrc ()
