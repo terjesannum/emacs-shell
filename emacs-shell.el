@@ -150,12 +150,6 @@
     (comint-interrupt-subjob))
   (abort-recursive-edit))
 
-(defun sudo-shell-source-user-bashrc (&rest rest)
-  "Source bashrc from user starting sudo-shell"
-  (process-send-string
-   (get-buffer-process (current-buffer))
-   "test -n \"$SUDO_USER\" -a -r $(eval echo ~$SUDO_USER)/.bashrc && type bash >/dev/null 2>&1 && exec bash --rcfile $(eval echo ~$SUDO_USER)/.bashrc\n"))
-
 (defun emacs-shell-run-command-silently (command)
   "Run command without showing in the shell buffer or shell history"
   (let ((process (get-buffer-process (current-buffer))))
