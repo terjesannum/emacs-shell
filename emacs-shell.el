@@ -100,7 +100,7 @@
   "Start shell in docker container"
   (interactive
    (list
-    (completing-read "Container: " (docker-tramp--running-containers))
+    (completing-read "Container: " (docker-tramp--running-containers) nil t)
     (and current-prefix-arg (read-string "Directory: " "/"))))
   (tramp-shell "docker" container (docker-image-name container) directory))
 
@@ -115,7 +115,7 @@
   "Start shell in Kubernetes pod"
   (interactive
    (list
-    (completing-read "Pod: " (kubernetes-tramp--running-containers))
+    (completing-read "Pod: " (kubernetes-tramp--running-containers) nil t)
     (and current-prefix-arg (read-string "Directory: " "/"))))
   (tramp-shell "kubectl" pod (pod-owner-name pod) directory))
 
