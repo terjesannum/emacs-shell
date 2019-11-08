@@ -176,15 +176,20 @@
     (dolist (command (split-string bashrc "\n"))
       (emacs-shell-run-command-silently command))))
 
-(add-hook 'tramp-shell-started-hook
-          (lambda (method &rest rest)
-            (let ((i 0))
-              (while (and (not (looking-back comint-prompt-regexp)) (< i 10))
-                (sleep-for 0 100)
-                (setq i (1+ i))))
-            (when (emacs-shell-exec-bash)
-              (emacs-shell-source-local-bashrc)
-              (comint-send-input))))
+(defun emacs-shell-wait-for-prompt (times sleep)
+  "Check for prompt n-times and sleep x ms between checks"
+  (let ((i 0))
+    (while (and (not (looking-back comint-prompt-regexp)) (< i times))
+      (sleep-for 0 sleep)
+      (setq i (1+ i)))))
+
+(defun emacs-shell-start-bash-with-local-bashrc (method &rest rest)
+  (emacs-shell-wait-for-prompt 10 100)
+  (when (emacs-shell-exec-bash)
+    (emacs-shell-source-local-bashrc)
+    (comint-send-input)))
+
+(add-hook 'tramp-shell-started-hook 'emacs-shell-start-bash-with-local-bashrc)
 
 (global-set-key (kbd "S-C-n") 'localhost-shell)
 (define-key read-passwd-map (kbd "C-c C-c") 'emacs-shell-interrupt-password-command)
