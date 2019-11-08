@@ -166,9 +166,10 @@
                          "if test `basename $0` = 'bash'; then echo running bash; else bash=`type bash` && bash=`echo $bash | grep -oE '[^ ]+$'` && echo run bash && exec $bash; fi")))
     (and (string-match "run.* bash" command-output) t)))
 
-(defun emacs-shell-script-to-oneline (buffer)
+(defun emacs-shell-script-to-oneline (&optional buffer)
   "Make buffer with shell script one line"
-  (with-current-buffer buffer
+  (interactive)
+  (with-current-buffer (or buffer (current-buffer))
     (replace-regexp "\\(^\\| \\)#.*" "" nil (point-min) (point-max))
     (flush-lines "^$" (point-min) (point-max))
     (goto-char (point-min))
