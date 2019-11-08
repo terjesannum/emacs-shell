@@ -167,7 +167,7 @@
     (and (string-match "run.* bash" command-output) t)))
 
 (defun emacs-shell-script-to-oneline (buffer)
-  "Make buffer with shell script to one line"
+  "Make buffer with shell script one line"
   (with-current-buffer buffer
     (replace-regexp "\\(^\\| \\)#.*" "" nil (point-min) (point-max))
     (flush-lines "^$" (point-min) (point-max))
