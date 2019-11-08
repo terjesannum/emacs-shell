@@ -166,15 +166,30 @@
                          "if test `basename $0` = 'bash'; then echo running bash; else bash=`type bash` && bash=`echo $bash | grep -oE '[^ ]+$'` && echo run bash && exec $bash; fi")))
     (and (string-match "run.* bash" command-output) t)))
 
+(defun emacs-shell-script-to-oneline (buffer)
+  "Make buffer with shell script to one line"
+  (with-current-buffer buffer
+    (replace-regexp "\\(^\\| \\)#.*" "" nil (point-min) (point-max))
+    (flush-lines "^$" (point-min) (point-max))
+    (goto-char (point-min))
+    (while (not (eobp))
+      (end-of-line)
+      (cond ((looking-back "\\({\\|do\\|then\\|elif\\|else\\) *")
+             (insert " "))
+            ((looking-back "\\\\ *")
+             (progn (re-search-backward "\\\\ *" nil t)
+                    (replace-match " ")))
+            (t (insert ";")))
+      (delete-char 1))))
+
 (defun emacs-shell-source-local-bashrc ()
   "Source bashrc from Emacs host in shell"
   (interactive)
   (let ((bashrc (with-temp-buffer
                   (insert-file-contents "~/.bashrc")
+                  (emacs-shell-script-to-oneline (current-buffer))
                   (buffer-string))))
-    (setq bashrc (concat "PS2='>'\n" bashrc)) ; ensure PS2 is set to get output on mulitline commands
-    (dolist (command (split-string bashrc "\n"))
-      (emacs-shell-run-command-silently command))))
+    (emacs-shell-run-command-silently bashrc)))
 
 (defun emacs-shell-wait-for-prompt (times sleep)
   "Check for prompt n-times and sleep x ms between checks"
