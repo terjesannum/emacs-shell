@@ -171,6 +171,7 @@
   (interactive)
   (with-current-buffer (or buffer (current-buffer))
     (replace-regexp "\\(^\\| \\)#.*" "" nil (point-min) (point-max))
+    (replace-regexp "\\(^ *\\| *$\\)" "" nil (point-min) (point-max))
     (flush-lines "^$" (point-min) (point-max))
     (goto-char (point-min))
     (while (not (eobp))
