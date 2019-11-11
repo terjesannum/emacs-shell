@@ -30,6 +30,8 @@ To start interactive shells, use these commands:
 | `M-x docker-shell`    | Shell in local docker container  |
 | `M-x pod-shell`       | Shell in kubernetes pod          |
 
+Bash will be started if available and your bashrc on the emacs host will be sourced in the remote shell.
+
 ### Keybindings
 
 In addition to the bindings from [shell-mode](https://www.gnu.org/software/emacs/manual/html_node/emacs/Shell-Mode.html), these keybindings are added:
