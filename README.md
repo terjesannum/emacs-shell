@@ -30,7 +30,8 @@ To start interactive shells, use these commands:
 | `M-x docker-shell`    | Shell in local docker container  |
 | `M-x pod-shell`       | Shell in kubernetes pod          |
 
-Bash will be started if available and your bashrc on the emacs host will be sourced in the remote shell.
+Bash will be started if available, and your `.bashrc` on the emacs host will be sourced in the remote shell. Shell history will also be saved in
+individual files on the emacs host (`.emacs.d/shell-history` directory), so history is kept between sessions even if pods have been restarted etc.
 
 ### Keybindings
 
