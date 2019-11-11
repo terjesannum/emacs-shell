@@ -183,7 +183,8 @@
             ((looking-back "\\\\")
              (progn (re-search-backward "\\\\" nil t)
                     (replace-match " ")))
-            (t (insert ";")))
+            (t (unless (looking-back ";")
+                 (insert ";"))))
       (delete-char 1))))
 
 (defun emacs-shell-source-local-bashrc ()
