@@ -185,7 +185,8 @@
                     (replace-match " ")))
             (t (unless (looking-back ";")
                  (insert ";"))))
-      (delete-char 1))))
+      (unless (eobp)
+        (delete-char 1)))))
 
 (defun emacs-shell-source-local-bashrc ()
   "Source bashrc from Emacs host in shell"
