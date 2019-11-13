@@ -191,11 +191,12 @@
 (defun emacs-shell-source-local-bashrc ()
   "Source bashrc from Emacs host in shell"
   (interactive)
-  (let ((bashrc (with-temp-buffer
-                  (insert-file-contents "~/.bashrc")
-                  (emacs-shell-script-to-oneline (current-buffer))
-                  (buffer-string))))
-    (emacs-shell-run-command-silently bashrc)))
+  (when (file-readable-p "~/.bashrc")
+    (let ((bashrc (with-temp-buffer
+                    (insert-file-contents "~/.bashrc")
+                    (emacs-shell-script-to-oneline (current-buffer))
+                    (buffer-string))))
+      (emacs-shell-run-command-silently bashrc))))
 
 (defun emacs-shell-wait-for-prompt (times sleep)
   "Check for prompt n-times and sleep x ms between checks"
