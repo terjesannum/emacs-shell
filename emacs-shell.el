@@ -29,6 +29,7 @@
 
 (require 'shell)
 (require 'tramp)
+(require 'bash-completion)      ; https://github.com/szermatt/emacs-bash-completion
 (require 'docker-tramp)         ; https://github.com/emacs-pe/docker-tramp.el
 (require 'kubernetes-tramp)     ; https://github.com/gruggiero/kubernetes-tramp
 
@@ -119,7 +120,14 @@
   (when (derived-mode-p 'shell-mode)
     (comint-write-input-ring)))
 
-(add-hook 'kill-buffer-hook 'shell-mode-write-comint-input-ring)
+(defun shell-mode-cleanup ()
+  (when (derived-mode-p 'shell-mode)
+    (comint-write-input-ring)
+    (when (bash-completion-is-running)
+      (kill-buffer (bash-completion-buffer)))
+    (tramp-cleanup-this-connection)))
+
+(add-hook 'kill-buffer-hook 'shell-mode-cleanup)
 
 (defun shell-mode-buffers-write-comint-input-ring ()
   (mapc
