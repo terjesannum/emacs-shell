@@ -118,10 +118,6 @@
     (when buffer
       (kill-buffer buffer))))
 
-(defun shell-mode-write-comint-input-ring ()
-  (when (derived-mode-p 'shell-mode)
-    (comint-write-input-ring)))
-
 (defun shell-mode-cleanup ()
   (when (derived-mode-p 'shell-mode)
     (comint-write-input-ring)
@@ -135,7 +131,8 @@
   (mapc
    (lambda (buffer)
      (with-current-buffer buffer
-       (shell-mode-write-comint-input-ring)))
+       (when (derived-mode-p 'shell-mode)
+         (comint-write-input-ring))))
    (buffer-list)))
 
 (add-hook 'kill-emacs-hook 'shell-mode-buffers-write-comint-input-ring)
