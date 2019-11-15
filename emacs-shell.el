@@ -27,11 +27,8 @@
 
 ;;; Code:
 
-(setq tramp-histfile-override t)
-(setq tramp-default-method "ssh")
 (setq explicit-shell-file-name "sh")
 (setq explicit-sh-args '("-l"))
-(setq tramp-remote-shell-executable "sh")
 
 ; Get environment variables from shell
 (require 'exec-path-from-shell) ; https://github.com/purcell/exec-path-from-shell
