@@ -206,8 +206,6 @@
 (define-key shell-mode-map (kbd "C-p") 'comint-previous-input)
 (define-key shell-mode-map (kbd "C-n") 'comint-next-input)
 
-(bash-completion-setup)
-
 (setq shell-font-lock-keywords nil)
 (setq comint-input-ring-size 50000)
 (setq comint-buffer-maximum-size 100000)
