@@ -27,15 +27,6 @@
 
 ;;; Code:
 
-(setq explicit-shell-file-name "sh")
-(setq explicit-sh-args '("-l"))
-
-; Get environment variables from shell
-(require 'exec-path-from-shell) ; https://github.com/purcell/exec-path-from-shell
-(when (memq window-system '(mac ns x))
-  (setq exec-path-from-shell-variables '("PATH" "MANPATH" "KUBECONFIG"))
-  (exec-path-from-shell-initialize))
-
 (require 'shell)
 (require 'tramp)
 (require 'bash-completion)      ; https://github.com/szermatt/emacs-bash-completion
