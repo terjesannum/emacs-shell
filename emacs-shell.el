@@ -113,8 +113,10 @@
   (emacs-shell "*shell*" "~" "localhost"))
 
 (defun shell-process-kill-buffer-sentinel (process state)
-  (message "shell(%s): %s" (buffer-name) state)
-  (kill-buffer (current-buffer)))
+  (message "shell(%s): %s" process state)
+  (let ((buffer (process-buffer process)))
+    (when buffer
+      (kill-buffer buffer))))
 
 (defun shell-mode-write-comint-input-ring ()
   (when (derived-mode-p 'shell-mode)
