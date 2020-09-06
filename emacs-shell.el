@@ -176,9 +176,6 @@
         (end-of-line)
         (cond ((looking-back "\\({\\|do\\|then\\|elif\\|else\\)" 4)
                (insert " "))
-              ((looking-back "\\\\" 2)
-               (progn (re-search-backward "\\\\" nil t)
-                      (replace-match " ")))
               (t (unless (looking-back ";" 1)
                    (insert ";"))))
         (unless (eobp)
@@ -187,9 +184,20 @@
         (setq start (point)))
       script)))
 
-(defun emacs-shell-script-to-oneline (buffer)
-  "Get script in BUFFER as one line."
-  (apply #'concatenate 'string (emacs-shell-script-to-list buffer)))
+(defun emacs-shell-compact-string-list (list max-length)
+  "Compact LIST of strings to list with elements of MAX-LENGTH."
+  (let ((batches nil)
+        (current ""))
+    (dolist (line list)
+      (if (or (not max-length) (< (+ (length current) (length line)) max-length))
+          (setq current (concat (replace-regexp-in-string "\\\\$" "" current) line))
+        (setq batches (append batches (list current)))
+        (setq current line)))
+    (setq batches (append batches (list current)))
+    batches))
+
+(defvar emacs-shell-bashrc-batch-size nil
+  "Max size of batches of bashrc sourced on remote hosts.")
 
 (defun emacs-shell-source-local-bashrc ()
   "Source bashrc from Emacs host in shell."
@@ -197,8 +205,9 @@
   (when (file-readable-p "~/.bashrc")
     (let ((bashrc (with-temp-buffer
                     (insert-file-contents "~/.bashrc")
-                    (emacs-shell-script-to-oneline (current-buffer)))))
-      (emacs-shell-run-command-silently bashrc))))
+                    (emacs-shell-script-to-list (current-buffer)))))
+      (dolist (batch (emacs-shell-compact-string-list bashrc emacs-shell-bashrc-batch-size))
+        (emacs-shell-run-command-silently batch)))))
 
 (defun emacs-shell-wait-for-prompt (times sleep)
   "Check for prompt n-times and sleep x ms between checks"
