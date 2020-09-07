@@ -176,7 +176,7 @@
         (end-of-line)
         (cond ((looking-back "\\({\\|do\\|then\\|elif\\|else\\)" 4)
                (insert " "))
-              (t (unless (looking-back ";" 1)
+              (t (unless (looking-back "[\\\\;]" 1)
                    (insert ";"))))
         (unless (eobp)
           (delete-char 1))
