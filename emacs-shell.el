@@ -4,8 +4,8 @@
 
 ;; Author: Terje Sannum <terje@offpiste.org>
 ;; Created: 14 Sep 2019
-;; Package-Requires: ((emacs "25.1") (exec-path-from-shell) (bash-completion) (docker-tramp) (kubernetes-tramp))
-;; Keywords: shell
+;; Package-Requires: ((emacs "26.1"))
+;; Keywords: unix comm
 ;; Homepage: https://github.com/terjesannum/emacs-shell
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -62,6 +62,7 @@
   (emacs-shell (concat method "-" host)
                (format "/%s:%s:%s" method host (or directory ""))
                (concat (or history-name host) "." method))
+  (hack-connection-local-variables-apply `(:application 'emacs-shell :protocol ,method :host ,host))
   (run-hook-with-args 'tramp-shell-started-hook method host history-name directory))
 
 (defun ssh-shell (host &optional directory)
@@ -241,6 +242,26 @@
               "\\| (will be hidden): *\\'"
               "\\|^Password for [^:]+: *\\'"
               "\\|^Enter .*password[^:]*: *\\'"))
+
+(connection-local-set-profile-variables
+ 'docker-container
+ '((emacs-shell-bashrc-batch-size . 4000)))
+
+(connection-local-set-profiles
+ '(:application 'emacs-shell :protocol "kubectl")
+  'docker-container)
+
+(connection-local-set-profiles
+ '(:application 'emacs-shell :protocol "docker")
+  'docker-container)
+
+(when (eq system-type 'darwin)
+  (connection-local-set-profile-variables
+   'mac-sudo-localhost
+   '((emacs-shell-bashrc-batch-size . 1000)))
+  (connection-local-set-profiles
+   '(:application 'emacs-shell :protocol "sudo" :machine "localhost")
+   'mac-sudo-localhost))
 
 (provide 'emacs-shell)
 
