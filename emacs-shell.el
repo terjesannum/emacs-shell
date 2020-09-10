@@ -44,6 +44,9 @@
 (add-to-list 'tramp-default-proxies-alist
              '("localhost" "\\`root\\'" nil))
 
+; hack kubernetes-tramp to use username as container name
+(setcar (cdr (assoc 'tramp-login-args (assoc "kubectl" tramp-methods))) (list kubernetes-tramp-kubectl-options '("exec" "-it") '("-c" "%u") '("%h") '("sh")))
+
 (defvar tramp-shell-hook nil "Hook called before starting a tramp shell")
 (defvar tramp-shell-started-hook nil "Hook called after starting a tramp shell")
 
@@ -56,11 +59,12 @@
     (set-process-sentinel (get-buffer-process shell-buffer)
                           'shell-process-kill-buffer-sentinel)))
 
-(defun tramp-shell (method host &optional history-name directory)
+(defun tramp-shell (method host &optional history-name directory user)
+  "Start an interactive shell on HOST using METHOD."
   (interactive "sMethod: \nsHost: ")
   (run-hook-with-args 'tramp-shell-hook method host history-name directory)
   (emacs-shell (concat method "-" host)
-               (format "/%s:%s:%s" method host (or directory ""))
+               (format "/%s:%s:%s" method (if user (format "%s@%s" user host) host) (or directory ""))
                (concat (or history-name host) "." method))
   (hack-connection-local-variables-apply `(:application 'emacs-shell :protocol ,method :host ,host))
   (run-hook-with-args 'tramp-shell-started-hook method host history-name directory))
@@ -100,13 +104,17 @@
           ((string= owner "StatefulSet") (replace-regexp-in-string "-[0-9]+$" "" pod))
           (t pod))))
 
-(defun pod-shell (pod &optional directory)
+(defun pod-shell (pod &optional container directory)
   "Start shell in Kubernetes pod"
   (interactive
-   (list
-    (completing-read "Pod: " (kubernetes-tramp--running-containers) nil t)
-    (and current-prefix-arg (read-string "Directory: " "/"))))
-  (tramp-shell "kubectl" pod (pod-owner-name pod) directory))
+   (let ((pod (completing-read "Pod: " (kubernetes-tramp--running-containers) nil t))
+         (params nil))
+     (setq params (append params (list pod)))
+     (when current-prefix-arg
+       (setq params (append params (list (completing-read "Container: " (split-string (car (apply #'process-lines kubernetes-tramp-kubectl-executable (list "get" "pod" pod "-o" "jsonpath={.spec.containers[*].name}"))) " " t) nil t))))
+       (setq params (append params (list (read-string "Directory: " "/")))))
+     params))
+  (tramp-shell "kubectl" pod (pod-owner-name pod) directory (if (string= "" container) nil container)))
 
 (defun localhost-shell ()
   "Start shell on localhost"
