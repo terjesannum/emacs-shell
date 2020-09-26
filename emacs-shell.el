@@ -205,7 +205,7 @@
     (setq batches (append batches (list current)))
     batches))
 
-(defvar emacs-shell-bashrc-batch-size nil
+(defvar emacs-shell-bashrc-batch-size 4000
   "Max size of batches of bashrc sourced on remote hosts.")
 
 (defun emacs-shell-source-local-bashrc ()
@@ -250,18 +250,6 @@
               "\\| (will be hidden): *\\'"
               "\\|^Password for [^:]+: *\\'"
               "\\|^Enter .*password[^:]*: *\\'"))
-
-(connection-local-set-profile-variables
- 'docker-container
- '((emacs-shell-bashrc-batch-size . 4000)))
-
-(connection-local-set-profiles
- '(:application 'emacs-shell :protocol "kubectl")
-  'docker-container)
-
-(connection-local-set-profiles
- '(:application 'emacs-shell :protocol "docker")
-  'docker-container)
 
 (when (eq system-type 'darwin)
   (connection-local-set-profile-variables
