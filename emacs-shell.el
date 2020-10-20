@@ -131,8 +131,7 @@
   (when (derived-mode-p 'shell-mode)
     (comint-write-input-ring)
     (when (bash-completion-is-running)
-      (kill-buffer (bash-completion-buffer)))
-    (tramp-cleanup-this-connection)))
+      (kill-buffer (bash-completion-buffer)))))
 
 (add-hook 'kill-buffer-hook 'shell-mode-cleanup)
 
