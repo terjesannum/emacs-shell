@@ -1,6 +1,6 @@
 # emacs-shell
 
-Setup tramp and shell-mode for interactive shells and remote file editing. Supports local shells, ssh, sudo, docker and kubernetes.
+Setup tramp and shell-mode for interactive shells and remote file editing. Supports local shells, ssh, sudo, gcloud, docker and kubernetes.
 
 ### Requirements
 
@@ -27,6 +27,7 @@ To start interactive shells, use these commands:
 | `M-x localhost-shell` | Shell on localhost               |
 | `M-x ssh-shell`       | Shell on remote host             |
 | `M-x sudo-shell`      | Root shell (localhost or remote) |
+| `M-x gcp-shell`       | Shell on gcp host (gcloud)       |
 | `M-x docker-shell`    | Shell in local docker container  |
 | `M-x pod-shell`       | Shell in kubernetes pod          |
 

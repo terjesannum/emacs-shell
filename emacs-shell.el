@@ -47,6 +47,15 @@
 ; hack kubernetes-tramp to use username as container name
 (setcar (cdr (assoc 'tramp-login-args (assoc "kubectl" tramp-methods))) (list kubernetes-tramp-kubectl-options '("exec" "-it") '("-c" "%u") '("%h") '("sh")))
 
+; add gcloud method for gcloud compute ssh
+(add-to-list 'tramp-methods
+  '("gcloud"
+    (tramp-login-program        "gcloud compute ssh --tunnel-through-iap")
+    (tramp-login-args           (("%h")))
+    (tramp-remote-shell         "/bin/sh")
+    (tramp-remote-shell-args    ("-c"))
+    (tramp-default-port         22)))
+
 (defvar tramp-shell-hook nil "Hook called before starting a tramp shell")
 (defvar tramp-shell-started-hook nil "Hook called after starting a tramp shell")
 
@@ -68,6 +77,14 @@
                (concat (or history-name host) "." method))
   (hack-connection-local-variables-apply `(:application 'emacs-shell :protocol ,method :host ,host))
   (run-hook-with-args 'tramp-shell-started-hook method host history-name directory))
+
+(defun gcp-shell (host &optional directory)
+  "Start gcloud ssh shell"
+  (interactive
+   (list
+    (read-string "Host: ")
+    (and current-prefix-arg (read-string "Directory: " "/"))))
+  (tramp-shell "gcloud" host nil directory))
 
 (defun ssh-shell (host &optional directory)
   "Start ssh shell"
