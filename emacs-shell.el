@@ -32,29 +32,24 @@
 (require 'bash-completion)      ; https://github.com/szermatt/emacs-bash-completion
 (require 'docker-tramp)         ; https://github.com/emacs-pe/docker-tramp.el
 (require 'kubernetes-tramp)     ; https://github.com/gruggiero/kubernetes-tramp
+(require 'gcloud-mode)          ; https://github.com/terjesannum/emacs-gcloud-mode
 
 (defvar user-remote-shell-history-directory
   (expand-file-name (concat user-emacs-directory "/" "shell-history" "/"))
   "Directory to save shell history files")
 (make-directory user-remote-shell-history-directory t)
 
-; proxy remote sudo-shells
+;; proxy remote sudo-shells
 (add-to-list 'tramp-default-proxies-alist
              '("." "\\`root\\'" "/ssh:%h:"))
 (add-to-list 'tramp-default-proxies-alist
              '("localhost" "\\`root\\'" nil))
 
-; hack kubernetes-tramp to use username as container name
+;; hack kubernetes-tramp to use username as container name
 (setcar (cdr (assoc 'tramp-login-args (assoc "kubectl" tramp-methods))) (list kubernetes-tramp-kubectl-options '("exec" "-it") '("-c" "%u") '("%h") '("sh")))
 
-; add gcloud method for gcloud compute ssh
-(add-to-list 'tramp-methods
-  '("gcloud"
-    (tramp-login-program        "gcloud compute ssh --tunnel-through-iap")
-    (tramp-login-args           (("%h")))
-    (tramp-remote-shell         "/bin/sh")
-    (tramp-remote-shell-args    ("-c"))
-    (tramp-default-port         22)))
+;; add gcloud tramp method
+(gcloud-add-tramp-method)
 
 (defvar tramp-shell-hook nil "Hook called before starting a tramp shell")
 (defvar tramp-shell-started-hook nil "Hook called after starting a tramp shell")
