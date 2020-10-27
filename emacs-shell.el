@@ -54,9 +54,12 @@
 (defvar tramp-shell-hook nil "Hook called before starting a tramp shell")
 (defvar tramp-shell-started-hook nil "Hook called after starting a tramp shell")
 
+(defvar emacs-shell-input-ring-size 100000 "Size of input history ring in shell buffers.")
+
 (defun emacs-shell (buffer-name directory history-file)
   (let* ((default-directory directory)
          (shell-buffer (shell (generate-new-buffer-name buffer-name))))
+    (setq comint-input-ring-size emacs-shell-input-ring-size)
     (setq comint-input-ring (make-ring comint-input-ring-size))
     (setq comint-input-ring-file-name (concat user-remote-shell-history-directory "/" history-file))
     (comint-read-input-ring 'silent)
@@ -250,7 +253,6 @@
 (define-key shell-mode-map (kbd "C-n") 'comint-next-input)
 
 (setq shell-font-lock-keywords nil)
-(setq comint-input-ring-size 50000)
 (setq comint-buffer-maximum-size 100000)
 (add-hook 'comint-output-filter-functions 'comint-truncate-buffer)
 (add-hook 'comint-mode-hook
