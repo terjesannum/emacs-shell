@@ -134,7 +134,7 @@
 (defun localhost-shell ()
   "Start shell on localhost"
   (interactive)
-  (emacs-shell "*shell*" "~" "localhost"))
+  (emacs-shell "*shell*" "~/" "localhost"))
 
 (defun shell-process-kill-buffer-sentinel (process state)
   (message "shell(%s): %s" process state)
