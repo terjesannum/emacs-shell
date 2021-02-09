@@ -84,6 +84,14 @@
     (and current-prefix-arg (read-string "Directory: " "/"))))
   (tramp-shell "gcloud" host nil directory))
 
+(defun gcp-sudo-shell (host &optional directory)
+  "Start gcloud sudo shell."
+  (interactive
+   (list
+    (read-string "Host: ")
+    (and current-prefix-arg (read-string "Directory: " "/"))))
+  (tramp-shell "gcloud" host nil directory (concat host "|sudo:root")))
+
 (defun ssh-shell (host &optional directory)
   "Start ssh shell"
   (interactive
