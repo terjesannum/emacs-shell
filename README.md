@@ -28,6 +28,7 @@ To start interactive shells, use these commands:
 | `M-x ssh-shell`       | Shell on remote host             |
 | `M-x sudo-shell`      | Root shell (localhost or remote) |
 | `M-x gcp-shell`       | Shell on gcp host (gcloud)       |
+| `M-x gcp-sudo-shell`  | Root shell on gcp host (gcloud)  |
 | `M-x docker-shell`    | Shell in local docker container  |
 | `M-x pod-shell`       | Shell in kubernetes pod          |
 
