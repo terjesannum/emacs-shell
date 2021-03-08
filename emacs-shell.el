@@ -270,6 +270,7 @@
       (concat comint-password-prompt-regexp
               "\\| (will be hidden): *\\'"
               "\\|^Password for [^:]+: *\\'"
+              "\\|^Instance Password[^:]*: *\\'"
               "\\|^Enter .*password[^:]*: *\\'"))
 
 (when (eq system-type 'darwin)
