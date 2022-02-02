@@ -65,12 +65,12 @@
 (defun tramp-shell (method host &optional history-name directory user)
   "Start an interactive shell on HOST using METHOD."
   (interactive "sMethod: \nsHost: ")
-  (run-hook-with-args 'tramp-shell-hook method host history-name directory)
+  (run-hooks 'tramp-shell-hook)
   (emacs-shell (concat method "-" host)
                (format "/%s:%s:%s" method (if user (format "%s@%s" user host) host) (or directory ""))
                (concat (or history-name host) "." method))
   (hack-connection-local-variables-apply `(:application 'emacs-shell :protocol ,method :host ,host))
-  (run-hook-with-args 'tramp-shell-started-hook method host history-name directory))
+  (run-hooks 'tramp-shell-started-hook))
 
 (defun ssh-shell (host &optional directory)
   "Start ssh shell"
@@ -227,7 +227,8 @@
       (sleep-for 0 sleep)
       (setq i (1+ i)))))
 
-(defun emacs-shell-start-bash-with-local-bashrc (method &rest rest)
+(defun emacs-shell-start-bash-with-local-bashrc ()
+  "Wait for prompt and source local bashrc."
   (emacs-shell-wait-for-prompt 10 100)
   (when (emacs-shell-exec-bash)
     (emacs-shell-source-local-bashrc)
