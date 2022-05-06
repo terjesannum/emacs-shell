@@ -43,6 +43,8 @@
              '("." "\\`root\\'" "/ssh:%h:"))
 (add-to-list 'tramp-default-proxies-alist
              '("localhost" "\\`root\\'" nil))
+;; disable timeout on sudo shells
+(setcar (cdr (assoc 'tramp-session-timeout (assoc "sudo" tramp-methods))) nil)
 
 ;; hack kubernetes-tramp to use username as container name
 (setcar (cdr (assoc 'tramp-login-args (assoc "kubectl" tramp-methods))) (list kubernetes-tramp-kubectl-options '("exec" "-it") '("-c" "%u") '("%h") '("sh")))
