@@ -54,13 +54,23 @@
 
 (defvar emacs-shell-input-ring-size 100000 "Size of input history ring in shell buffers.")
 
+(defun emacs-shell-fill-input-ring (ring file-name)
+  "Fill RING with contents of FILE-NAME."
+  (when (file-exists-p file-name)
+    (with-temp-buffer
+      (insert-file-contents file-name)
+      (goto-char (point-min))
+      (while (not (eobp))
+        (ring-insert ring (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
+        (forward-line 1)))))
+
 (defun emacs-shell (buffer-name directory history-file)
   (let* ((default-directory directory)
          (shell-buffer (shell (generate-new-buffer-name buffer-name))))
-    (setq comint-input-ring-size emacs-shell-input-ring-size)
-    (setq comint-input-ring (make-ring comint-input-ring-size))
-    (setq comint-input-ring-file-name (concat user-remote-shell-history-directory "/" history-file))
-    (comint-read-input-ring 'silent)
+    (setq-local comint-input-ring-size emacs-shell-input-ring-size)
+    (setq-local comint-input-ring (make-ring comint-input-ring-size))
+    (setq-local comint-input-ring-file-name (concat user-remote-shell-history-directory "/" history-file))
+    (emacs-shell-fill-input-ring comint-input-ring comint-input-ring-file-name)
     (set-process-sentinel (get-buffer-process shell-buffer)
                           'shell-process-kill-buffer-sentinel)))
 
