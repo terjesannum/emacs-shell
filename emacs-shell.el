@@ -257,7 +257,7 @@
 (setq comint-buffer-maximum-size 100000)
 (add-hook 'comint-output-filter-functions 'comint-truncate-buffer)
 (add-hook 'comint-mode-hook
-          '(lambda () (setq comint-input-ignoredups t)))
+          #'(lambda () (setq comint-input-ignoredups t)))
 
 (setq comint-password-prompt-regexp
       (concat comint-password-prompt-regexp
