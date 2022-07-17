@@ -33,10 +33,10 @@
 (require 'docker-tramp)         ; https://github.com/emacs-pe/docker-tramp.el
 (require 'kubernetes-tramp)     ; https://github.com/gruggiero/kubernetes-tramp
 
-(defvar user-remote-shell-history-directory
+(defvar emacs-shell-history-directory
   (expand-file-name (concat user-emacs-directory "/" "shell-history" "/"))
-  "Directory to save shell history files")
-(make-directory user-remote-shell-history-directory t)
+  "Directory to save shell history files.")
+(make-directory emacs-shell-history-directory t)
 
 ;; proxy remote sudo-shells
 (add-to-list 'tramp-default-proxies-alist
@@ -69,7 +69,7 @@
          (shell-buffer (shell (generate-new-buffer-name buffer-name))))
     (setq-local comint-input-ring-size emacs-shell-input-ring-size)
     (setq-local comint-input-ring (make-ring comint-input-ring-size))
-    (setq-local comint-input-ring-file-name (concat user-remote-shell-history-directory "/" history-file))
+    (setq-local comint-input-ring-file-name (concat emacs-shell-history-directory "/" history-file))
     (emacs-shell-fill-input-ring comint-input-ring comint-input-ring-file-name)
     (set-process-sentinel (get-buffer-process shell-buffer)
                           'shell-process-kill-buffer-sentinel)))
