@@ -144,9 +144,7 @@
 
 (defun shell-mode-cleanup ()
   (when (derived-mode-p 'shell-mode)
-    (comint-write-input-ring)
-    (when (bash-completion-is-running)
-      (kill-buffer (bash-completion-buffer)))))
+    (comint-write-input-ring)))
 
 (add-hook 'kill-buffer-hook 'shell-mode-cleanup)
 
