@@ -29,7 +29,6 @@
 
 (require 'shell)
 (require 'tramp)
-(require 'bash-completion)      ; https://github.com/szermatt/emacs-bash-completion
 (require 'docker-tramp)         ; https://github.com/emacs-pe/docker-tramp.el
 (require 'kubernetes-tramp)     ; https://github.com/gruggiero/kubernetes-tramp
 
