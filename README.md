@@ -2,16 +2,9 @@
 
 Setup tramp and shell-mode for interactive shells and remote file editing. Supports local shells, ssh, sudo, docker and kubernetes.
 
-### Requirements
-
-* [exec-path-from-shell](https://github.com/purcell/exec-path-from-shell)
-* [emacs-bash-completion](https://github.com/szermatt/emacs-bash-completion)
-* [docker-tramp.el](https://github.com/emacs-pe/docker-tramp.el)
-* [kubernetes-tramp](https://github.com/gruggiero/kubernetes-tramp)
-
 ### Installation
 
-Install requirements, clone this repository and add to `load-path`:
+Clone this repository and add to `load-path`:
 
 ```lisp
 (add-to-list 'load-path "~/.emacs.d/emacs-shell")

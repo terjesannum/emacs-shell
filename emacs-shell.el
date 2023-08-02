@@ -29,8 +29,6 @@
 
 (require 'shell)
 (require 'tramp)
-(require 'docker-tramp)         ; https://github.com/emacs-pe/docker-tramp.el
-(require 'kubernetes-tramp)     ; https://github.com/gruggiero/kubernetes-tramp
 
 (defvar emacs-shell-history-directory
   (expand-file-name (concat user-emacs-directory "/" "shell-history" "/"))
@@ -42,11 +40,12 @@
              '("." "\\`root\\'" "/ssh:%h:"))
 (add-to-list 'tramp-default-proxies-alist
              '("localhost" "\\`root\\'" nil))
+
 ;; disable timeout on sudo shells
 (setcar (cdr (assoc 'tramp-session-timeout (assoc "sudo" tramp-methods))) nil)
 
-;; hack kubernetes-tramp to use username as container name
-(setcar (cdr (assoc 'tramp-login-args (assoc "kubectl" tramp-methods))) (list kubernetes-tramp-kubectl-options '("exec" "-it") '("-c" "%u") '("%h") '("sh")))
+;; hack kubernetes tramp method to use username as container name
+(setcar (cdr (assoc 'tramp-login-args (assoc "kubernetes" tramp-methods))) '(("exec") ("%h") ("-it") ("-c" "%u") ("--") ("sh")))
 
 (defvar tramp-shell-hook nil "Hook called before starting a tramp shell")
 (defvar tramp-shell-started-hook nil "Hook called after starting a tramp shell")
@@ -100,19 +99,19 @@
   (tramp-shell "sudo" host nil directory))
 
 (defun docker-image-name (id)
-  (let ((image (car (apply #'process-lines docker-tramp-docker-executable (list "inspect" "-f" "{{ .Config.Image }}" id)))))
+  (let ((image (car (apply #'process-lines tramp-docker-program (list "inspect" "-f" "{{ .Config.Image }}" id)))))
     (replace-regexp-in-string "/" "_" (car (split-string image "[@:]")))))
 
 (defun docker-shell (container &optional directory)
   "Start shell in docker container"
   (interactive
    (list
-    (completing-read "Container: " (docker-tramp--running-containers) nil t)
+    (completing-read "Container: " (apply #'process-lines tramp-docker-program (list "ps" "--format" "{{ .Names }}")))
     (and current-prefix-arg (read-string "Directory: " "/"))))
   (tramp-shell "docker" container (docker-image-name container) directory))
 
 (defun pod-owner-name (pod)
-  (let ((owner (car (apply #'process-lines kubernetes-tramp-kubectl-executable (list "get" "pod" pod "-o" "jsonpath={.metadata.ownerReferences[].kind}")))))
+  (let ((owner (car (apply #'process-lines tramp-kubernetes-program (list "get" "pod" pod "-o" "jsonpath={.metadata.ownerReferences[].kind}")))))
     (cond ((string= owner "ReplicaSet") (replace-regexp-in-string "-[0-9a-f]\\{8,10\\}-[0-9a-z]\\{5\\}$" "" pod))
           ((string= owner "DaemonSet") (replace-regexp-in-string "-[0-9a-z]\\{5\\}$" "" pod))
           ((string= owner "StatefulSet") (replace-regexp-in-string "-[0-9]+$" "" pod))
@@ -121,14 +120,14 @@
 (defun pod-shell (pod &optional container directory)
   "Start shell in Kubernetes pod"
   (interactive
-   (let ((pod (completing-read "Pod: " (kubernetes-tramp--running-containers) nil t))
+   (let ((pod (completing-read "Pod: " (split-string (car (apply #'process-lines tramp-kubernetes-program (list "get" "pods" "-o" "jsonpath={$.items[*].metadata.name}"))) " " t) nil t))
          (params nil))
      (setq params (append params (list pod)))
      (when current-prefix-arg
-       (setq params (append params (list (completing-read "Container: " (split-string (car (apply #'process-lines kubernetes-tramp-kubectl-executable (list "get" "pod" pod "-o" "jsonpath={.spec.containers[*].name}"))) " " t) nil t))))
+       (setq params (append params (list (completing-read "Container: " (split-string (car (apply #'process-lines tramp-kubernetes-program (list "get" "pod" pod "-o" "jsonpath={.spec.containers[*].name}"))) " " t) nil t))))
        (setq params (append params (list (read-string "Directory: " "/")))))
      params))
-  (tramp-shell "kubectl" pod (pod-owner-name pod) directory (if (string= "" container) nil container)))
+  (tramp-shell "kubernetes" pod (pod-owner-name pod) directory (if (string= "" container) nil container)))
 
 (defun localhost-shell ()
   "Start shell on localhost"
